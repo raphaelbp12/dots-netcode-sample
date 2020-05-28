@@ -5,8 +5,9 @@ using Unity.NetCode;
 using Unity.Physics;
 using Unity.Transforms;
 
-public struct CubeOnServerGhostSerializer : IGhostSerializer<CubeOnServerSnapshotData>
+public struct ServerCubeGhostSerializer : IGhostSerializer<ServerCubeSnapshotData>
 {
+    private ComponentType componentTypePhysicsCollider;
     private ComponentType componentTypePhysicsDamping;
     private ComponentType componentTypePhysicsMass;
     private ComponentType componentTypePhysicsVelocity;
@@ -23,9 +24,10 @@ public struct CubeOnServerGhostSerializer : IGhostSerializer<CubeOnServerSnapsho
         return 1;
     }
 
-    public int SnapshotSize => UnsafeUtility.SizeOf<CubeOnServerSnapshotData>();
+    public int SnapshotSize => UnsafeUtility.SizeOf<ServerCubeSnapshotData>();
     public void BeginSerialize(ComponentSystemBase system)
     {
+        componentTypePhysicsCollider = ComponentType.ReadWrite<PhysicsCollider>();
         componentTypePhysicsDamping = ComponentType.ReadWrite<PhysicsDamping>();
         componentTypePhysicsMass = ComponentType.ReadWrite<PhysicsMass>();
         componentTypePhysicsVelocity = ComponentType.ReadWrite<PhysicsVelocity>();
@@ -36,7 +38,7 @@ public struct CubeOnServerGhostSerializer : IGhostSerializer<CubeOnServerSnapsho
         ghostTranslationType = system.GetArchetypeChunkComponentType<Translation>(true);
     }
 
-    public void CopyToSnapshot(ArchetypeChunk chunk, int ent, uint tick, ref CubeOnServerSnapshotData snapshot, GhostSerializerState serializerState)
+    public void CopyToSnapshot(ArchetypeChunk chunk, int ent, uint tick, ref ServerCubeSnapshotData snapshot, GhostSerializerState serializerState)
     {
         snapshot.tick = tick;
         var chunkDataRotation = chunk.GetNativeArray(ghostRotationType);

@@ -2,7 +2,7 @@ using Unity.Networking.Transport;
 using Unity.NetCode;
 using Unity.Mathematics;
 
-public struct CubeOnServerSnapshotData : ISnapshotData<CubeOnServerSnapshotData>
+public struct ServerCubeSnapshotData : ISnapshotData<ServerCubeSnapshotData>
 {
     public uint tick;
     private int RotationValueX;
@@ -53,7 +53,7 @@ public struct CubeOnServerSnapshotData : ISnapshotData<CubeOnServerSnapshotData>
         TranslationValueZ = (int)(val.z * 100);
     }
 
-    public void PredictDelta(uint tick, ref CubeOnServerSnapshotData baseline1, ref CubeOnServerSnapshotData baseline2)
+    public void PredictDelta(uint tick, ref ServerCubeSnapshotData baseline1, ref ServerCubeSnapshotData baseline2)
     {
         var predictor = new GhostDeltaPredictor(tick, this.tick, baseline1.tick, baseline2.tick);
         RotationValueX = predictor.PredictInt(RotationValueX, baseline1.RotationValueX, baseline2.RotationValueX);
@@ -65,7 +65,7 @@ public struct CubeOnServerSnapshotData : ISnapshotData<CubeOnServerSnapshotData>
         TranslationValueZ = predictor.PredictInt(TranslationValueZ, baseline1.TranslationValueZ, baseline2.TranslationValueZ);
     }
 
-    public void Serialize(int networkId, ref CubeOnServerSnapshotData baseline, ref DataStreamWriter writer, NetworkCompressionModel compressionModel)
+    public void Serialize(int networkId, ref ServerCubeSnapshotData baseline, ref DataStreamWriter writer, NetworkCompressionModel compressionModel)
     {
         changeMask0 = (RotationValueX != baseline.RotationValueX ||
                                           RotationValueY != baseline.RotationValueY ||
@@ -90,7 +90,7 @@ public struct CubeOnServerSnapshotData : ISnapshotData<CubeOnServerSnapshotData>
         }
     }
 
-    public void Deserialize(uint tick, ref CubeOnServerSnapshotData baseline, ref DataStreamReader reader,
+    public void Deserialize(uint tick, ref ServerCubeSnapshotData baseline, ref DataStreamReader reader,
         NetworkCompressionModel compressionModel)
     {
         this.tick = tick;
@@ -122,7 +122,7 @@ public struct CubeOnServerSnapshotData : ISnapshotData<CubeOnServerSnapshotData>
             TranslationValueZ = baseline.TranslationValueZ;
         }
     }
-    public void Interpolate(ref CubeOnServerSnapshotData target, float factor)
+    public void Interpolate(ref ServerCubeSnapshotData target, float factor)
     {
         SetRotationValue(math.slerp(GetRotationValue(), target.GetRotationValue(), factor));
         SetTranslationValue(math.lerp(GetTranslationValue(), target.GetTranslationValue(), factor));

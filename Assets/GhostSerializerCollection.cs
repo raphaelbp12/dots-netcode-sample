@@ -12,7 +12,7 @@ public struct dotsnetcodesampleGhostSerializerCollection : IGhostSerializerColle
         var arr = new string[]
         {
             "CubeGhostSerializer",
-            "CubeOnServerGhostSerializer",
+            "ServerCubeGhostSerializer",
         };
         return arr;
     }
@@ -24,7 +24,7 @@ public struct dotsnetcodesampleGhostSerializerCollection : IGhostSerializerColle
     {
         if (typeof(T) == typeof(CubeSnapshotData))
             return 0;
-        if (typeof(T) == typeof(CubeOnServerSnapshotData))
+        if (typeof(T) == typeof(ServerCubeSnapshotData))
             return 1;
         return -1;
     }
@@ -32,7 +32,7 @@ public struct dotsnetcodesampleGhostSerializerCollection : IGhostSerializerColle
     public void BeginSerialize(ComponentSystemBase system)
     {
         m_CubeGhostSerializer.BeginSerialize(system);
-        m_CubeOnServerGhostSerializer.BeginSerialize(system);
+        m_ServerCubeGhostSerializer.BeginSerialize(system);
     }
 
     public int CalculateImportance(int serializer, ArchetypeChunk chunk)
@@ -42,7 +42,7 @@ public struct dotsnetcodesampleGhostSerializerCollection : IGhostSerializerColle
             case 0:
                 return m_CubeGhostSerializer.CalculateImportance(chunk);
             case 1:
-                return m_CubeOnServerGhostSerializer.CalculateImportance(chunk);
+                return m_ServerCubeGhostSerializer.CalculateImportance(chunk);
         }
 
         throw new ArgumentException("Invalid serializer type");
@@ -55,7 +55,7 @@ public struct dotsnetcodesampleGhostSerializerCollection : IGhostSerializerColle
             case 0:
                 return m_CubeGhostSerializer.SnapshotSize;
             case 1:
-                return m_CubeOnServerGhostSerializer.SnapshotSize;
+                return m_ServerCubeGhostSerializer.SnapshotSize;
         }
 
         throw new ArgumentException("Invalid serializer type");
@@ -71,14 +71,14 @@ public struct dotsnetcodesampleGhostSerializerCollection : IGhostSerializerColle
             }
             case 1:
             {
-                return GhostSendSystem<dotsnetcodesampleGhostSerializerCollection>.InvokeSerialize<CubeOnServerGhostSerializer, CubeOnServerSnapshotData>(m_CubeOnServerGhostSerializer, ref dataStream, data);
+                return GhostSendSystem<dotsnetcodesampleGhostSerializerCollection>.InvokeSerialize<ServerCubeGhostSerializer, ServerCubeSnapshotData>(m_ServerCubeGhostSerializer, ref dataStream, data);
             }
             default:
                 throw new ArgumentException("Invalid serializer type");
         }
     }
     private CubeGhostSerializer m_CubeGhostSerializer;
-    private CubeOnServerGhostSerializer m_CubeOnServerGhostSerializer;
+    private ServerCubeGhostSerializer m_ServerCubeGhostSerializer;
 }
 
 public struct EnabledotsnetcodesampleGhostSendSystemComponent : IComponentData

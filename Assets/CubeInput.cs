@@ -1,4 +1,5 @@
 ﻿using Unity.Entities;
+using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Networking.Transport;
 using UnityEngine;
@@ -22,6 +23,7 @@ public struct CubeInput : ICommandData<CubeInput>
     public uint tick;
     public int horizontal;
     public int vertical;
+    public float3 mousePosition;
 
     public void Deserialize(uint tick, ref DataStreamReader reader)
     {
@@ -82,6 +84,7 @@ public class SampleCubeInput : ComponentSystem
         }
         var input = default(CubeInput);
         input.tick = World.GetExistingSystem<ClientSimulationSystemGroup>().ServerTick;
+        input.mousePosition = Input.mousePosition;
         if (Input.GetKey("a"))
             input.horizontal -= 1;
         if (Input.GetKey("d"))

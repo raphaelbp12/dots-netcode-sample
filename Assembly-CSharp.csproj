@@ -67,10 +67,10 @@
     <Compile Include="Assets\Game.cs" />
     <Compile Include="Assets\Generated\CubeGhostSerializer.cs" />
     <Compile Include="Assets\Generated\CubeGhostUpdateSystem.cs" />
-    <Compile Include="Assets\Generated\CubeOnServerGhostSerializer.cs" />
-    <Compile Include="Assets\Generated\CubeOnServerGhostUpdateSystem.cs" />
-    <Compile Include="Assets\Generated\CubeOnServerSnapshotData.cs" />
     <Compile Include="Assets\Generated\CubeSnapshotData.cs" />
+    <Compile Include="Assets\Generated\ServercubeGhostSerializer.cs" />
+    <Compile Include="Assets\Generated\ServercubeGhostUpdateSystem.cs" />
+    <Compile Include="Assets\Generated\ServercubeSnapshotData.cs" />
     <Compile Include="Assets\GhostDeserializerCollection.cs" />
     <Compile Include="Assets\GhostSerializerCollection.cs" />
     <Compile Include="Assets\MovableCubeComponent.cs" />
@@ -675,6 +675,10 @@
       <Project>{A250B6D0-AB05-3A4F-5A49-587B8B0F0892}</Project>
       <Name>Unity.Scenes.Editor</Name>
     </ProjectReference>
+    <ProjectReference Include="Unity.Physics.csproj">
+      <Project>{41234C75-C337-FC46-2AE1-AFF19F9E5ECF}</Project>
+      <Name>Unity.Physics</Name>
+    </ProjectReference>
     <ProjectReference Include="Unity.Mathematics.Extensions.csproj">
       <Project>{9CB9F0AA-C0DB-338B-BAE7-9A560309F275}</Project>
       <Name>Unity.Mathematics.Extensions</Name>
@@ -698,6 +702,10 @@
     <ProjectReference Include="Unity.Rendering.Hybrid.csproj">
       <Project>{2A0553CA-5FDB-63D6-0FE4-C6099F6444F0}</Project>
       <Name>Unity.Rendering.Hybrid</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Physics.Hybrid.csproj">
+      <Project>{F9D47047-5393-B9A6-6A34-F073C47CE8EE}</Project>
+      <Name>Unity.Physics.Hybrid</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.CollabProxy.Editor.csproj">
       <Project>{3D7895FC-6CE7-3FDB-CDCC-FEBF34EAAC2C}</Project>
@@ -731,6 +739,10 @@
       <Project>{674C9912-230E-1975-5CD0-18529C7E4027}</Project>
       <Name>Unity.Properties</Name>
     </ProjectReference>
+    <ProjectReference Include="Unity.Physics.Editor.csproj">
+      <Project>{A9FB15E2-0806-EDB9-8FA4-DFC0A1380E45}</Project>
+      <Name>Unity.Physics.Editor</Name>
+    </ProjectReference>
     <ProjectReference Include="Unity.Entities.csproj">
       <Project>{D5E4A338-3AB4-3350-7B58-36465C90D6AD}</Project>
       <Name>Unity.Entities</Name>
@@ -762,18 +774,6 @@
     <ProjectReference Include="Unity.Transforms.Hybrid.csproj">
       <Project>{74B85D6E-67E9-C75A-4DA9-5B099F5195CD}</Project>
       <Name>Unity.Transforms.Hybrid</Name>
-    </ProjectReference>
-    <ProjectReference Include="Unity.Physics.csproj">
-      <Project>{41234C75-C337-FC46-2AE1-AFF19F9E5ECF}</Project>
-      <Name>Unity.Physics</Name>
-    </ProjectReference>
-    <ProjectReference Include="Unity.Physics.Hybrid.csproj">
-      <Project>{F9D47047-5393-B9A6-6A34-F073C47CE8EE}</Project>
-      <Name>Unity.Physics.Hybrid</Name>
-    </ProjectReference>
-    <ProjectReference Include="Unity.Physics.Editor.csproj">
-      <Project>{A9FB15E2-0806-EDB9-8FA4-DFC0A1380E45}</Project>
-      <Name>Unity.Physics.Editor</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

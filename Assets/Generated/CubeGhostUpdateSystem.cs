@@ -25,8 +25,9 @@ public class CubeGhostUpdateSystem : JobComponentSystem
         [ReadOnly] public ArchetypeChunkBufferType<CubeSnapshotData> ghostSnapshotDataType;
         [ReadOnly] public ArchetypeChunkEntityType ghostEntityType;
         public ArchetypeChunkComponentType<MovableCubeComponent> ghostMovableCubeComponentType;
-        public ArchetypeChunkComponentType<Rotation> ghostRotationType;
-        public ArchetypeChunkComponentType<Translation> ghostTranslationType;
+        [ReadOnly] public ArchetypeChunkBufferType<LinkedEntityGroup> ghostLinkedEntityGroupType;
+        [NativeDisableParallelForRestriction] public ComponentDataFromEntity<Rotation> ghostRotationFromEntity;
+        [NativeDisableParallelForRestriction] public ComponentDataFromEntity<Translation> ghostTranslationFromEntity;
 
         public uint targetTick;
         public float targetTickFraction;
@@ -39,8 +40,7 @@ public class CubeGhostUpdateSystem : JobComponentSystem
             var ghostEntityArray = chunk.GetNativeArray(ghostEntityType);
             var ghostSnapshotDataArray = chunk.GetBufferAccessor(ghostSnapshotDataType);
             var ghostMovableCubeComponentArray = chunk.GetNativeArray(ghostMovableCubeComponentType);
-            var ghostRotationArray = chunk.GetNativeArray(ghostRotationType);
-            var ghostTranslationArray = chunk.GetNativeArray(ghostTranslationType);
+            var ghostLinkedEntityGroupArray = chunk.GetBufferAccessor(ghostLinkedEntityGroupType);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             var minMaxOffset = ThreadIndex * (JobsUtility.CacheLineSize/4);
 #endif
@@ -61,14 +61,20 @@ public class CubeGhostUpdateSystem : JobComponentSystem
                 snapshot.GetDataAtTick(targetTick, targetTickFraction, out snapshotData);
 
                 var ghostMovableCubeComponent = ghostMovableCubeComponentArray[entityIndex];
-                var ghostRotation = ghostRotationArray[entityIndex];
-                var ghostTranslation = ghostTranslationArray[entityIndex];
+                var ghostRotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value];
+                var ghostTranslation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value];
+                var ghostChild0Rotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value];
+                var ghostChild0Translation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value];
                 ghostMovableCubeComponent.PlayerId = snapshotData.GetMovableCubeComponentPlayerId(deserializerState);
                 ghostRotation.Value = snapshotData.GetRotationValue(deserializerState);
                 ghostTranslation.Value = snapshotData.GetTranslationValue(deserializerState);
+                ghostChild0Rotation.Value = snapshotData.GetChild0RotationValue(deserializerState);
+                ghostChild0Translation.Value = snapshotData.GetChild0TranslationValue(deserializerState);
+                ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value] = ghostRotation;
+                ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value] = ghostTranslation;
+                ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value] = ghostChild0Rotation;
+                ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value] = ghostChild0Translation;
                 ghostMovableCubeComponentArray[entityIndex] = ghostMovableCubeComponent;
-                ghostRotationArray[entityIndex] = ghostRotation;
-                ghostTranslationArray[entityIndex] = ghostTranslation;
             }
         }
     }
@@ -88,8 +94,9 @@ public class CubeGhostUpdateSystem : JobComponentSystem
         [ReadOnly] public ArchetypeChunkEntityType ghostEntityType;
         public ArchetypeChunkComponentType<PredictedGhostComponent> predictedGhostComponentType;
         public ArchetypeChunkComponentType<MovableCubeComponent> ghostMovableCubeComponentType;
-        public ArchetypeChunkComponentType<Rotation> ghostRotationType;
-        public ArchetypeChunkComponentType<Translation> ghostTranslationType;
+        [ReadOnly] public ArchetypeChunkBufferType<LinkedEntityGroup> ghostLinkedEntityGroupType;
+        [NativeDisableParallelForRestriction] public ComponentDataFromEntity<Rotation> ghostRotationFromEntity;
+        [NativeDisableParallelForRestriction] public ComponentDataFromEntity<Translation> ghostTranslationFromEntity;
         public uint targetTick;
         public uint lastPredictedTick;
         public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
@@ -102,8 +109,7 @@ public class CubeGhostUpdateSystem : JobComponentSystem
             var ghostSnapshotDataArray = chunk.GetBufferAccessor(ghostSnapshotDataType);
             var predictedGhostComponentArray = chunk.GetNativeArray(predictedGhostComponentType);
             var ghostMovableCubeComponentArray = chunk.GetNativeArray(ghostMovableCubeComponentType);
-            var ghostRotationArray = chunk.GetNativeArray(ghostRotationType);
-            var ghostTranslationArray = chunk.GetNativeArray(ghostTranslationType);
+            var ghostLinkedEntityGroupArray = chunk.GetBufferAccessor(ghostLinkedEntityGroupType);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             var minMaxOffset = ThreadIndex * (JobsUtility.CacheLineSize/4);
 #endif
@@ -136,14 +142,20 @@ public class CubeGhostUpdateSystem : JobComponentSystem
                     continue;
 
                 var ghostMovableCubeComponent = ghostMovableCubeComponentArray[entityIndex];
-                var ghostRotation = ghostRotationArray[entityIndex];
-                var ghostTranslation = ghostTranslationArray[entityIndex];
+                var ghostRotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value];
+                var ghostTranslation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value];
+                var ghostChild0Rotation = ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value];
+                var ghostChild0Translation = ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value];
                 ghostMovableCubeComponent.PlayerId = snapshotData.GetMovableCubeComponentPlayerId(deserializerState);
                 ghostRotation.Value = snapshotData.GetRotationValue(deserializerState);
                 ghostTranslation.Value = snapshotData.GetTranslationValue(deserializerState);
+                ghostChild0Rotation.Value = snapshotData.GetChild0RotationValue(deserializerState);
+                ghostChild0Translation.Value = snapshotData.GetChild0TranslationValue(deserializerState);
+                ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value] = ghostRotation;
+                ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][0].Value] = ghostTranslation;
+                ghostRotationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value] = ghostChild0Rotation;
+                ghostTranslationFromEntity[ghostLinkedEntityGroupArray[entityIndex][1].Value] = ghostChild0Translation;
                 ghostMovableCubeComponentArray[entityIndex] = ghostMovableCubeComponent;
-                ghostRotationArray[entityIndex] = ghostRotation;
-                ghostTranslationArray[entityIndex] = ghostTranslation;
             }
         }
     }
@@ -172,8 +184,7 @@ public class CubeGhostUpdateSystem : JobComponentSystem
                 ComponentType.ReadWrite<CubeSnapshotData>(),
                 ComponentType.ReadOnly<GhostComponent>(),
                 ComponentType.ReadWrite<MovableCubeComponent>(),
-                ComponentType.ReadWrite<Rotation>(),
-                ComponentType.ReadWrite<Translation>(),
+                ComponentType.ReadOnly<LinkedEntityGroup>(),
             },
             None = new []{ComponentType.ReadWrite<PredictedGhostComponent>()}
         });
@@ -184,8 +195,7 @@ public class CubeGhostUpdateSystem : JobComponentSystem
                 ComponentType.ReadOnly<GhostComponent>(),
                 ComponentType.ReadOnly<PredictedGhostComponent>(),
                 ComponentType.ReadWrite<MovableCubeComponent>(),
-                ComponentType.ReadWrite<Rotation>(),
-                ComponentType.ReadWrite<Translation>(),
+                ComponentType.ReadOnly<LinkedEntityGroup>(),
             }
         });
         RequireForUpdate(GetEntityQuery(ComponentType.ReadWrite<CubeSnapshotData>(),
@@ -206,8 +216,9 @@ public class CubeGhostUpdateSystem : JobComponentSystem
                 ghostEntityType = GetArchetypeChunkEntityType(),
                 predictedGhostComponentType = GetArchetypeChunkComponentType<PredictedGhostComponent>(),
                 ghostMovableCubeComponentType = GetArchetypeChunkComponentType<MovableCubeComponent>(),
-                ghostRotationType = GetArchetypeChunkComponentType<Rotation>(),
-                ghostTranslationType = GetArchetypeChunkComponentType<Translation>(),
+                ghostLinkedEntityGroupType = GetArchetypeChunkBufferType<LinkedEntityGroup>(true),
+                ghostRotationFromEntity = GetComponentDataFromEntity<Rotation>(),
+                ghostTranslationFromEntity = GetComponentDataFromEntity<Translation>(),
 
                 targetTick = m_ClientSimulationSystemGroup.ServerTick,
                 lastPredictedTick = m_LastPredictedTick
@@ -229,8 +240,9 @@ public class CubeGhostUpdateSystem : JobComponentSystem
                 ghostSnapshotDataType = GetArchetypeChunkBufferType<CubeSnapshotData>(true),
                 ghostEntityType = GetArchetypeChunkEntityType(),
                 ghostMovableCubeComponentType = GetArchetypeChunkComponentType<MovableCubeComponent>(),
-                ghostRotationType = GetArchetypeChunkComponentType<Rotation>(),
-                ghostTranslationType = GetArchetypeChunkComponentType<Translation>(),
+                ghostLinkedEntityGroupType = GetArchetypeChunkBufferType<LinkedEntityGroup>(true),
+                ghostRotationFromEntity = GetComponentDataFromEntity<Rotation>(),
+                ghostTranslationFromEntity = GetComponentDataFromEntity<Translation>(),
                 targetTick = m_ClientSimulationSystemGroup.InterpolationTick,
                 targetTickFraction = m_ClientSimulationSystemGroup.InterpolationTickFraction
             };
