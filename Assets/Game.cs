@@ -14,12 +14,12 @@ public class Game : ComponentSystem
     }
     protected override void OnCreate()
     {
-        UnityEngine.Debug.Log(String.Format("OnCreate", UnityEngine.SceneManagement.SceneManager.GetActiveScene().name));
-        RequireSingletonForUpdate<InitGameComponent>();
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "SampleScene")
-            return;
+        //UnityEngine.Debug.Log(String.Format("OnCreate", UnityEngine.SceneManagement.SceneManager.GetActiveScene().name));
+        //if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "SampleScene")
+        //    return;
         // Create singleton, require singleton for update so system runs once
         EntityManager.CreateEntity(typeof(InitGameComponent));
+        RequireSingletonForUpdate<InitGameComponent>();
     }
 
     protected override void OnUpdate()
@@ -35,7 +35,6 @@ public class Game : ComponentSystem
                 NetworkEndPoint ep = NetworkEndPoint.LoopbackIpv4;
                 ep.Port = 7979;
                 network.Connect(ep);
-                UnityEngine.Debug.Log(String.Format("try to connect"));
             }
 #if UNITY_EDITOR
             else if (world.GetExistingSystem<ServerSimulationSystemGroup>() != null)
@@ -44,7 +43,6 @@ public class Game : ComponentSystem
                 NetworkEndPoint ep = NetworkEndPoint.AnyIpv4;
                 ep.Port = 7979;
                 network.Listen(ep);
-                UnityEngine.Debug.Log(String.Format("try to listen"));
             }
 #endif
         }
@@ -92,7 +90,7 @@ public class GoInGameClientSystem : ComponentSystem
 {
     protected override void OnCreate()
     {
-        //RequireSingletonForUpdate<EnabledotsnetcodesampleGhostReceiveSystemComponent>();
+        RequireSingletonForUpdate<EnabledotsnetcodesampleGhostReceiveSystemComponent>();
     }
 
     protected override void OnUpdate()
@@ -113,7 +111,7 @@ public class GoInGameServerSystem : ComponentSystem
 {
     protected override void OnCreate()
     {
-        //RequireSingletonForUpdate<EnabledotsnetcodesampleGhostSendSystemComponent>();
+        RequireSingletonForUpdate<EnabledotsnetcodesampleGhostSendSystemComponent>();
     }
 
     protected override void OnUpdate()
@@ -122,12 +120,13 @@ public class GoInGameServerSystem : ComponentSystem
         {
             PostUpdateCommands.AddComponent<NetworkStreamInGame>(reqSrc.SourceConnection);
             UnityEngine.Debug.Log(String.Format("Server setting connection {0} to in game", EntityManager.GetComponentData<NetworkIdComponent>(reqSrc.SourceConnection).Value));
-#if false
+#if True
             var ghostCollection = GetSingleton<GhostPrefabCollectionComponent>();
             var ghostId = dotsnetcodesampleGhostSerializerCollection.FindGhostType<CubeSnapshotData>();
             var prefab = EntityManager.GetBuffer<GhostPrefabBuffer>(ghostCollection.serverPrefabs)[ghostId].Value;
             var player = EntityManager.Instantiate(prefab);
-            EntityManager.SetComponentData(player, new MovableCubeComponent { PlayerId = EntityManager.GetComponentData<NetworkIdComponent>(reqSrc.SourceConnection).Value });
+            var playerId = EntityManager.GetComponentData<NetworkIdComponent>(reqSrc.SourceConnection).Value;
+            EntityManager.SetComponentData(player, new MovableCubeComponent { PlayerId = playerId });
 
             PostUpdateCommands.AddBuffer<CubeInput>(player);
             PostUpdateCommands.SetComponent(reqSrc.SourceConnection, new CommandTargetComponent { targetEntity = player });

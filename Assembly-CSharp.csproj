@@ -67,6 +67,9 @@
     <Compile Include="Assets\Game.cs" />
     <Compile Include="Assets\Generated\CubeGhostSerializer.cs" />
     <Compile Include="Assets\Generated\CubeGhostUpdateSystem.cs" />
+    <Compile Include="Assets\Generated\CubeOnServerGhostSerializer.cs" />
+    <Compile Include="Assets\Generated\CubeOnServerGhostUpdateSystem.cs" />
+    <Compile Include="Assets\Generated\CubeOnServerSnapshotData.cs" />
     <Compile Include="Assets\Generated\CubeSnapshotData.cs" />
     <Compile Include="Assets\GhostDeserializerCollection.cs" />
     <Compile Include="Assets\GhostSerializerCollection.cs" />
@@ -652,6 +655,10 @@
       <Project>{0C6427F2-09F4-D5FE-AE6D-BF152298A4EB}</Project>
       <Name>Unity.Entities.StaticTypeRegistry</Name>
     </ProjectReference>
+    <ProjectReference Include="Unity.NetCode.Physics.csproj">
+      <Project>{D1260C79-4081-1083-7CDA-8DDB1AF605C5}</Project>
+      <Name>Unity.NetCode.Physics</Name>
+    </ProjectReference>
     <ProjectReference Include="Unity.Burst.Editor.csproj">
       <Project>{5E89DF38-1DC9-7035-3064-BCA08A346F8E}</Project>
       <Name>Unity.Burst.Editor</Name>
@@ -755,6 +762,18 @@
     <ProjectReference Include="Unity.Transforms.Hybrid.csproj">
       <Project>{74B85D6E-67E9-C75A-4DA9-5B099F5195CD}</Project>
       <Name>Unity.Transforms.Hybrid</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Physics.csproj">
+      <Project>{41234C75-C337-FC46-2AE1-AFF19F9E5ECF}</Project>
+      <Name>Unity.Physics</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Physics.Hybrid.csproj">
+      <Project>{F9D47047-5393-B9A6-6A34-F073C47CE8EE}</Project>
+      <Name>Unity.Physics.Hybrid</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Physics.Editor.csproj">
+      <Project>{A9FB15E2-0806-EDB9-8FA4-DFC0A1380E45}</Project>
+      <Name>Unity.Physics.Editor</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
