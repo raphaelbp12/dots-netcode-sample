@@ -27,6 +27,8 @@ public struct CubeInput : ICommandData<CubeInput>
     public int horizontal;
     public int vertical;
     public float rotation;
+    public int toggleFire;
+    public int fire;
 
     public void Deserialize(uint tick, ref DataStreamReader reader)
     {
@@ -34,6 +36,8 @@ public struct CubeInput : ICommandData<CubeInput>
         horizontal = reader.ReadInt();
         vertical = reader.ReadInt();
         rotation = reader.ReadFloat();
+        toggleFire = reader.ReadInt();
+        fire = reader.ReadInt();
     }
 
     public void Serialize(ref DataStreamWriter writer)
@@ -41,6 +45,8 @@ public struct CubeInput : ICommandData<CubeInput>
         writer.WriteInt(horizontal);
         writer.WriteInt(vertical);
         writer.WriteFloat(rotation);
+        writer.WriteInt(toggleFire);
+        writer.WriteInt(fire);
     }
 
     public void Deserialize(uint tick, ref DataStreamReader reader, CubeInput baseline,
@@ -113,6 +119,10 @@ public class SampleCubeInput : ComponentSystem
             input.vertical -= 1;
         if (Input.GetKey("w"))
             input.vertical += 1;
+        if (Input.GetKey("e"))
+            input.toggleFire = input.toggleFire == 1 ? 0 : 1;
+        if (Input.GetKey("q"))
+            input.fire = 1;
         var inputBuffer = EntityManager.GetBuffer<CubeInput>(localInput);
         inputBuffer.AddCommandData(input);
     }

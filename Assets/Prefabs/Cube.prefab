@@ -221,6 +221,14 @@ MonoBehaviour:
       interpolate: 0
     manualFieldList: 0
     entityIndex: 0
+  - name: Unity.Physics.PhysicsCollider
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
   - name: Unity.Rendering.PerInstanceCullingTag
     interpolatedClient: 1
     predictedClient: 1
@@ -275,14 +283,6 @@ MonoBehaviour:
       interpolate: 1
     manualFieldList: 1
     entityIndex: 0
-  - name: Unity.Physics.PhysicsCollider
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
-    manualFieldList: 0
-    entityIndex: 1
   - name: Unity.Rendering.PerInstanceCullingTag
     interpolatedClient: 1
     predictedClient: 1

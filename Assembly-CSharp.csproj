@@ -63,18 +63,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\CubeInput.cs" />
-    <Compile Include="Assets\Game.cs" />
     <Compile Include="Assets\Generated\CubeGhostSerializer.cs" />
     <Compile Include="Assets\Generated\CubeGhostUpdateSystem.cs" />
     <Compile Include="Assets\Generated\CubeSnapshotData.cs" />
+    <Compile Include="Assets\Generated\GhostDeserializerCollection.cs" />
+    <Compile Include="Assets\Generated\GhostSerializerCollection.cs" />
     <Compile Include="Assets\Generated\ServercubeGhostSerializer.cs" />
     <Compile Include="Assets\Generated\ServercubeGhostUpdateSystem.cs" />
     <Compile Include="Assets\Generated\ServercubeSnapshotData.cs" />
-    <Compile Include="Assets\GhostDeserializerCollection.cs" />
-    <Compile Include="Assets\GhostSerializerCollection.cs" />
-    <Compile Include="Assets\MovableCubeComponent.cs" />
-    <Compile Include="Assets\MoveCubeSystem.cs" />
+    <Compile Include="Assets\Scripts\Components\MovableCubeComponent.cs" />
+    <Compile Include="Assets\Scripts\Core\CubeInput.cs" />
+    <Compile Include="Assets\Scripts\Core\Game.cs" />
+    <Compile Include="Assets\Scripts\Systems\MoveCubeSystem.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.14f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
