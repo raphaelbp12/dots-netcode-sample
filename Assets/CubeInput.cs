@@ -2,6 +2,9 @@
 using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Networking.Transport;
+using Unity.Physics;
+using Unity.Physics.Systems;
+using Unity.Transforms;
 using UnityEngine;
 
 #if true
@@ -23,19 +26,21 @@ public struct CubeInput : ICommandData<CubeInput>
     public uint tick;
     public int horizontal;
     public int vertical;
-    public float3 mousePosition;
+    public float rotation;
 
     public void Deserialize(uint tick, ref DataStreamReader reader)
     {
         this.tick = tick;
         horizontal = reader.ReadInt();
         vertical = reader.ReadInt();
+        rotation = reader.ReadFloat();
     }
 
     public void Serialize(ref DataStreamWriter writer)
     {
         writer.WriteInt(horizontal);
         writer.WriteInt(vertical);
+        writer.WriteFloat(rotation);
     }
 
     public void Deserialize(uint tick, ref DataStreamReader reader, CubeInput baseline,
@@ -68,10 +73,14 @@ public class SampleCubeInput : ComponentSystem
 
     protected override void OnUpdate()
     {
+        var raycaster = new MouseRayCast() { pw = World.GetOrCreateSystem<BuildPhysicsWorld>().PhysicsWorld };
         var localInput = GetSingleton<CommandTargetComponent>().targetEntity;
+        var input = default(CubeInput);
+        input.tick = World.GetExistingSystem<ClientSimulationSystemGroup>().ServerTick;
+
+        var localPlayerId = GetSingleton<NetworkIdComponent>().Value;
         if (localInput == Entity.Null)
         {
-            var localPlayerId = GetSingleton<NetworkIdComponent>().Value;
             Entities.WithNone<CubeInput>().ForEach((Entity ent, ref MovableCubeComponent cube) =>
             {
                 if (cube.PlayerId == localPlayerId)
@@ -82,9 +91,20 @@ public class SampleCubeInput : ComponentSystem
             });
             return;
         }
-        var input = default(CubeInput);
-        input.tick = World.GetExistingSystem<ClientSimulationSystemGroup>().ServerTick;
-        input.mousePosition = Input.mousePosition;
+
+        float3 mousePosition = Input.mousePosition;
+
+        float3 trans = EntityManager.GetComponentData<Translation>(localInput).Value;
+
+        Unity.Physics.RaycastHit? movDestination = raycaster.CheckRay(mousePosition, trans, 1000f);
+        if (movDestination != null)
+        {
+            Vector3 relativePos = movDestination.Value.Position - trans;
+            relativePos.y = 0;
+            Vector3 eulerAngles = Quaternion.LookRotation(relativePos, Vector3.up).eulerAngles;
+            input.rotation = eulerAngles.y;
+        }
+
         if (Input.GetKey("a"))
             input.horizontal -= 1;
         if (Input.GetKey("d"))
@@ -95,6 +115,36 @@ public class SampleCubeInput : ComponentSystem
             input.vertical += 1;
         var inputBuffer = EntityManager.GetBuffer<CubeInput>(localInput);
         inputBuffer.AddCommandData(input);
+    }
+
+    private struct MouseRayCast
+    {
+        public PhysicsWorld pw;
+        public Unity.Physics.RaycastHit? CheckRay(float3 mousePosition, float3 playerPosition, float distance)
+        {
+            var cameraRay = Camera.main.ScreenPointToRay(mousePosition);
+            Unity.Physics.RaycastHit hit;
+
+            var ray = new RaycastInput()
+            {
+                Start = cameraRay.origin,
+                End = cameraRay.origin + cameraRay.direction * distance,
+                Filter = new CollisionFilter()
+                {
+                    BelongsTo = ~0u, // all 1s, so all layers, collide with everything 
+                    CollidesWith = ~0u,
+                    GroupIndex = 0
+                }
+            };
+            bool hasHit = pw.CastRay(ray, out hit);
+
+            if (hasHit)
+            {
+                //SetCursor(CursorType.Movement);
+                return hit;
+            }
+            return null;
+        }
     }
 }
 #endif
