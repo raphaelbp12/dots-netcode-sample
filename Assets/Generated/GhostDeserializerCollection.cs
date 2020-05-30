@@ -13,11 +13,12 @@ public struct dotsnetcodesampleGhostDeserializerCollection : IGhostDeserializerC
         {
             "CubeGhostSerializer",
             "ServerCubeGhostSerializer",
+            "ProjectileGhostSerializer",
         };
         return arr;
     }
 
-    public int Length => 2;
+    public int Length => 3;
 #endif
     public void Initialize(World world)
     {
@@ -29,12 +30,17 @@ public struct dotsnetcodesampleGhostDeserializerCollection : IGhostDeserializerC
         m_ServerCubeSnapshotDataNewGhostIds = curServerCubeGhostSpawnSystem.NewGhostIds;
         m_ServerCubeSnapshotDataNewGhosts = curServerCubeGhostSpawnSystem.NewGhosts;
         curServerCubeGhostSpawnSystem.GhostType = 1;
+        var curProjectileGhostSpawnSystem = world.GetOrCreateSystem<ProjectileGhostSpawnSystem>();
+        m_ProjectileSnapshotDataNewGhostIds = curProjectileGhostSpawnSystem.NewGhostIds;
+        m_ProjectileSnapshotDataNewGhosts = curProjectileGhostSpawnSystem.NewGhosts;
+        curProjectileGhostSpawnSystem.GhostType = 2;
     }
 
     public void BeginDeserialize(JobComponentSystem system)
     {
         m_CubeSnapshotDataFromEntity = system.GetBufferFromEntity<CubeSnapshotData>();
         m_ServerCubeSnapshotDataFromEntity = system.GetBufferFromEntity<ServerCubeSnapshotData>();
+        m_ProjectileSnapshotDataFromEntity = system.GetBufferFromEntity<ProjectileSnapshotData>();
     }
     public bool Deserialize(int serializer, Entity entity, uint snapshot, uint baseline, uint baseline2, uint baseline3,
         ref DataStreamReader reader, NetworkCompressionModel compressionModel)
@@ -46,6 +52,9 @@ public struct dotsnetcodesampleGhostDeserializerCollection : IGhostDeserializerC
                 baseline3, ref reader, compressionModel);
             case 1:
                 return GhostReceiveSystem<dotsnetcodesampleGhostDeserializerCollection>.InvokeDeserialize(m_ServerCubeSnapshotDataFromEntity, entity, snapshot, baseline, baseline2,
+                baseline3, ref reader, compressionModel);
+            case 2:
+                return GhostReceiveSystem<dotsnetcodesampleGhostDeserializerCollection>.InvokeDeserialize(m_ProjectileSnapshotDataFromEntity, entity, snapshot, baseline, baseline2,
                 baseline3, ref reader, compressionModel);
             default:
                 throw new ArgumentException("Invalid serializer type");
@@ -64,6 +73,10 @@ public struct dotsnetcodesampleGhostDeserializerCollection : IGhostDeserializerC
                 m_ServerCubeSnapshotDataNewGhostIds.Add(ghostId);
                 m_ServerCubeSnapshotDataNewGhosts.Add(GhostReceiveSystem<dotsnetcodesampleGhostDeserializerCollection>.InvokeSpawn<ServerCubeSnapshotData>(snapshot, ref reader, compressionModel));
                 break;
+            case 2:
+                m_ProjectileSnapshotDataNewGhostIds.Add(ghostId);
+                m_ProjectileSnapshotDataNewGhosts.Add(GhostReceiveSystem<dotsnetcodesampleGhostDeserializerCollection>.InvokeSpawn<ProjectileSnapshotData>(snapshot, ref reader, compressionModel));
+                break;
             default:
                 throw new ArgumentException("Invalid serializer type");
         }
@@ -75,6 +88,9 @@ public struct dotsnetcodesampleGhostDeserializerCollection : IGhostDeserializerC
     private BufferFromEntity<ServerCubeSnapshotData> m_ServerCubeSnapshotDataFromEntity;
     private NativeList<int> m_ServerCubeSnapshotDataNewGhostIds;
     private NativeList<ServerCubeSnapshotData> m_ServerCubeSnapshotDataNewGhosts;
+    private BufferFromEntity<ProjectileSnapshotData> m_ProjectileSnapshotDataFromEntity;
+    private NativeList<int> m_ProjectileSnapshotDataNewGhostIds;
+    private NativeList<ProjectileSnapshotData> m_ProjectileSnapshotDataNewGhosts;
 }
 public struct EnabledotsnetcodesampleGhostReceiveSystemComponent : IComponentData
 {}

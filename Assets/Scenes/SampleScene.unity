@@ -608,13 +608,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c75b8787d8624691813514d3823a59f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SerializerCollectionPath: GhostSerializerCollection.cs
-  DeserializerCollectionPath: GhostDeserializerCollection.cs
+  SerializerCollectionPath: Generated/GhostSerializerCollection.cs
+  DeserializerCollectionPath: Generated/GhostDeserializerCollection.cs
   NamePrefix: dotsnetcodesample
   Ghosts:
   - prefab: {fileID: 1003272762014806340, guid: 9235d949d07b2e6479d68bd395db951d,
       type: 3}
     enabled: 1
   - prefab: {fileID: 8561230752887988595, guid: b2a34cc2b8fdbc54bbfc1b1777d45140,
+      type: 3}
+    enabled: 1
+  - prefab: {fileID: 1730388601763507374, guid: c8e6e0015d3be3e479e6e0f20c9cc829,
       type: 3}
     enabled: 1
