@@ -71,6 +71,7 @@ public class NetCubeReceiveCommandSystem : CommandReceiveSystem<CubeInput>
 [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
 public class SampleCubeInput : ComponentSystem
 {
+    CubeInput oldInput;
     protected override void OnCreate()
     {
         RequireSingletonForUpdate<NetworkIdComponent>();
@@ -111,6 +112,8 @@ public class SampleCubeInput : ComponentSystem
             input.rotation = eulerAngles.y;
         }
 
+        input.toggleFire = oldInput.toggleFire;
+
         if (Input.GetKey("a"))
             input.horizontal -= 1;
         if (Input.GetKey("d"))
@@ -119,12 +122,13 @@ public class SampleCubeInput : ComponentSystem
             input.vertical -= 1;
         if (Input.GetKey("w"))
             input.vertical += 1;
-        if (Input.GetKey("e"))
+        if (Input.GetKeyDown("e"))
             input.toggleFire = input.toggleFire == 1 ? 0 : 1;
         if (Input.GetKey("q"))
             input.fire = 1;
         var inputBuffer = EntityManager.GetBuffer<CubeInput>(localInput);
         inputBuffer.AddCommandData(input);
+        oldInput = input;
     }
 
     private struct MouseRayCast
