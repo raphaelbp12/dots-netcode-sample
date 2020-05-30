@@ -35,6 +35,8 @@ public class LifeTimeSystem : SystemBase
             }
         }).ScheduleParallel(updateLifeTimeJob);
 
+        destroyJob.Complete();
+
         this.Dependency = destroyJob;
     }
 }
