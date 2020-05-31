@@ -27,7 +27,10 @@ public struct CubeInput : ICommandData<CubeInput>
     public int horizontal;
     public int vertical;
     public float rotation;
+    public int cameraRotation;
+    public int resetCameraRotation;
     public int toggleFire;
+    public int toggleCameraZOffset;
     public int fire;
 
     public void Deserialize(uint tick, ref DataStreamReader reader)
@@ -35,8 +38,11 @@ public struct CubeInput : ICommandData<CubeInput>
         this.tick = tick;
         horizontal = reader.ReadInt();
         vertical = reader.ReadInt();
+        cameraRotation = reader.ReadInt();
+        resetCameraRotation = reader.ReadInt();
         rotation = reader.ReadFloat();
         toggleFire = reader.ReadInt();
+        toggleCameraZOffset = reader.ReadInt();
         fire = reader.ReadInt();
     }
 
@@ -44,8 +50,11 @@ public struct CubeInput : ICommandData<CubeInput>
     {
         writer.WriteInt(horizontal);
         writer.WriteInt(vertical);
+        writer.WriteInt(cameraRotation);
+        writer.WriteInt(resetCameraRotation);
         writer.WriteFloat(rotation);
         writer.WriteInt(toggleFire);
+        writer.WriteInt(toggleCameraZOffset);
         writer.WriteInt(fire);
     }
 
@@ -113,6 +122,7 @@ public class SampleCubeInput : ComponentSystem
         }
 
         input.toggleFire = oldInput.toggleFire;
+        input.toggleCameraZOffset = oldInput.toggleCameraZOffset;
 
         if (Input.GetKey("a"))
             input.horizontal -= 1;
@@ -122,9 +132,17 @@ public class SampleCubeInput : ComponentSystem
             input.vertical -= 1;
         if (Input.GetKey("w"))
             input.vertical += 1;
-        if (Input.GetKeyDown("e"))
-            input.toggleFire = input.toggleFire == 1 ? 0 : 1;
         if (Input.GetKey("q"))
+            input.cameraRotation -= 1;
+        if (Input.GetKey("e"))
+            input.cameraRotation += 1;
+        if (Input.GetKey("x"))
+            input.resetCameraRotation = 1;
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+            input.toggleFire = input.toggleFire == 1 ? 0 : 1;
+        if (Input.GetKeyDown("z"))
+            input.toggleCameraZOffset = input.toggleCameraZOffset == 1 ? 0 : 1;
+        if (Input.GetKey(KeyCode.Mouse0))
             input.fire = 1;
         var inputBuffer = EntityManager.GetBuffer<CubeInput>(localInput);
         inputBuffer.AddCommandData(input);
